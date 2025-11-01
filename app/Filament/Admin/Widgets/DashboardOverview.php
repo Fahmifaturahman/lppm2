@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Widgets;
 
 use App\Models\Proposal;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\AccountWidget;
 
 class DashboardOverview extends BaseWidget
@@ -20,23 +20,23 @@ class DashboardOverview extends BaseWidget
     protected function getCards(): array
     {
         return [
-            Card::make('Total Proposal', Proposal::count())
+            Stat::make('Total Proposal', Proposal::count())
                 ->description('Semua proposal yang diajukan')
                 ->color('primary'),
 
-            Card::make('Proposal Diterima', Proposal::where('status', 'diterima')->count())
+            Stat::make('Proposal Diterima', Proposal::where('status', 'diterima')->count())
                 ->description('Proposal yang telah disetujui')
                 ->color('success'),
 
-            Card::make('Proposal Menunggu', Proposal::where('status', 'menunggu')->count())
+            Stat::make('Proposal Menunggu', Proposal::where('status', 'menunggu')->count())
                 ->description('Menunggu validasi')
                 ->color('warning'),
 
-            Card::make('Proposal Ditolak', Proposal::where('status', 'ditolak')->count())
+            Stat::make('Proposal Ditolak', Proposal::where('status', 'ditolak')->count())
                 ->description('Perlu ditinjau ulang')
                 ->color('danger'),
 
-            Card::make('Proposal Revisi', Proposal::where('status', 'revisi')->count())
+            Stat::make('Proposal Revisi', Proposal::where('status', 'revisi')->count())
                 ->description('Perlu perbaikan dari pengusul')
                 ->color('gray'),
         ];

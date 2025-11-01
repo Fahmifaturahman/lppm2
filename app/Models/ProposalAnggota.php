@@ -20,6 +20,7 @@ class ProposalAnggota extends Model
         'bidang_fokus',
         'rumpun_ilmu_lv2',
         'uraian_tugas',
+        'file_tambahan',
     ];
 
     public function proposal()
@@ -30,6 +31,24 @@ class ProposalAnggota extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+        /**
+     * The "booted" method of the model.
+     * Ini akan berjalan otomatis setiap kali model dioperasikan.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (ProposalAnggota $anggota) {
+            
+            if ($anggota->user_id && is_null($anggota->nama)) {
+                $user = User::find($anggota->user_id);
+                
+                if ($user) {
+                    $anggota->nama = $user->name;
+                    $anggota->nim_nidn = $user->nim_nidn;
+                }
+            }
+        });
     }
 }
 

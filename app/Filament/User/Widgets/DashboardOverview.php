@@ -3,44 +3,61 @@
 namespace App\Filament\User\Widgets;
 
 use App\Models\Proposal;
-use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\AccountWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardOverview extends BaseWidget
 {
+    /**
+     * Mengatur widget apa saja yang tampil di halaman ini.
+     */
     public static function getWidgets(): array
     {
         return [
-            AccountWidget::class,
-            static::class,
+            AccountWidget::class, 
+            static::class,      
         ];
     }
+
+    /**
+     * Mengambil dan menghitung data untuk ditampilkan di kartu statistik.
+     */
     protected function getCards(): array
     {
-        /** @var \App\Models\User $user */
-        $userId = Auth::id();
+        $user = Auth::user();
+
+        
+        $query = Proposal::query()
+            ->where(function (Builder $query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhereHas('anggota', function (Builder $subQuery) use ($user) {
+                          $subQuery->where('user_id', $user->id);
+                      });
+            });
+
         return [
-            Card::make('Total Proposal', Proposal::where('user_id', $userId)->count())
-                ->description('Semua proposal yang diajukan')
+            Stat::make('Total Proposal', $query->clone()->count())
+                ->description('Semua proposal yang melibatkan Anda')
                 ->color('primary'),
 
-            Card::make('Proposal Diterima', Proposal::where('user_id', $userId)->where('status', 'diterima')->count())
+            Stat::make('Proposal Diterima', $query->clone()->where('status', 'diterima')->count())
                 ->description('Proposal yang telah disetujui')
                 ->color('success'),
 
-            Card::make('Proposal Menunggu', Proposal::where('user_id', $userId)->where('status', 'menunggu')->count())
+            Stat::make('Proposal Menunggu', $query->clone()->where('status', 'menunggu')->count())
                 ->description('Menunggu validasi')
                 ->color('warning'),
 
-            Card::make('Proposal Ditolak', Proposal::where('user_id', $userId)->where('status', 'ditolak')->count())
+            Stat::make('Proposal Ditolak', $query->clone()->where('status', 'ditolak')->count())
                 ->description('Perlu ditinjau ulang')
                 ->color('danger'),
-            Card::make('Proposal Revisi', Proposal::where('user_id', $userId)->where('status', 'revisi')->count())
+                
+            Stat::make('Proposal Revisi', $query->clone()->where('status', 'revisi')->count())
                 ->description('Perlu perbaikan dari pengusul')
-                ->color('gray'),
+                ->color('info'),
         ];
     }
 }

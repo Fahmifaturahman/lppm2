@@ -2,17 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\ProposalDownloadController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/download/{file}', function ($file) {
-    $path = 'proposals/' . $file;
-
-    if (!Storage::disk('public')->exists($path)) {
-        abort(404);
-    }
-
-    return response()->download(storage_path("app/public/{$path}"));
-})->name('download-proposal');
+Route::get('/proposals/{proposal}/download', [ProposalDownloadController::class, 'download'])
+    ->middleware('auth') 
+    ->name('proposals.download');
