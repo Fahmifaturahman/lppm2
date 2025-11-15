@@ -40,9 +40,11 @@ class CreateProposal extends CreateRecord
         // Simpan data Ketua ke dalam relasi anggota
         $proposal->anggota()->create([
             'user_id'  => $user->id,
+            'nama'   => $user->name,
             'peran'    => 'ketua',
             'tipe'     => $tipe,
             'nim_nidn' => $user->nim_nidn,
+            'prodi'     => $user->prodi,
         ]);
     }
 }

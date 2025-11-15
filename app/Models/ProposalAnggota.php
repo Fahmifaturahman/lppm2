@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Models\User;
 use App\Models\Proposal;
 
@@ -32,23 +33,26 @@ class ProposalAnggota extends Model
     {
         return $this->belongsTo(User::class);
     }
-        /**
-     * The "booted" method of the model.
-     * Ini akan berjalan otomatis setiap kali model dioperasikan.
-     */
-    protected static function booted(): void
+    public function namaLengkap(): Attribute
     {
-        static::creating(function (ProposalAnggota $anggota) {
-            
-            if ($anggota->user_id && is_null($anggota->nama)) {
-                $user = User::find($anggota->user_id);
-                
-                if ($user) {
-                    $anggota->nama = $user->name;
-                    $anggota->nim_nidn = $user->nim_nidn;
-                }
-            }
-        });
+        return Attribute::make(
+            get: fn ()=> $this->user->name ?? $this->name ?? 'N/A',
+        );
     }
+
+    public function nomorInduk(): Attribute
+    {
+        return Attribute::make(
+            get: fn ()=> $this->user->nim_nidn ?? $this->nim_nidn ?? 'N/A',
+        );
+    }
+    protected function prodiAnggota(): Attribute
+    {
+        return Attribute::make(
+            get: fn ()=> $this->user->prodi ?? $this->prodi ?? 'N/A',
+        );
+    }
+    
+
 }
 

@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin') 
             ->login()
             ->brandName('LPPM Admin Panel')
+            ->favicon(asset('storage/images/logo-stmik bandung.png'))
             ->colors([
                 'primary' => '#003399',
             ])

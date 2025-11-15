@@ -25,6 +25,7 @@ class UserPanelProvider extends PanelProvider
             ->path('user')
             ->login()
             ->brandName('LPPM STMIK')
+            ->favicon(asset('storage/images/logo-stmik-bandung.png'))
             ->colors([
                 'primary' => '#3b82f6',
             ])
